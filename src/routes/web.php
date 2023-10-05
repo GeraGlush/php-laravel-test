@@ -14,5 +14,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('menu');
+})->name('menu');
+
+Route::get('/getCargosApi', function () {
+    return view('getCargosApi');
+})->name('getCargosApi');
+
+Route::get('/cargosUpdater', function () {
+    return view('cargosUpdater');
+})->name('cargosUpdater');
