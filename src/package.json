@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "dev": "node_modules/cross-env/src/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "development": "mix",
         "watch": "mix watch",
@@ -13,7 +13,9 @@
     "devDependencies": {
         "axios": "^1.1.2",
         "cross-env": "^7.0.3",
+        "laravel-mix": "^6.0.49",
         "laravel-vite-plugin": "^0.8.0",
-        "vite": "^4.0.0"
+        "vite": "^4.0.0",
+        "webpack": "^5.88.2"
     }
 }
