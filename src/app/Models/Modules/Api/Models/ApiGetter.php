@@ -2,13 +2,12 @@
 
 namespace App\Models\Modules\Api\Models;
 
-use App\Jobs\RequestHandler;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Amp\Loop;
-use Amp\Promise;
+use Swoole\Runtime;
+use Swoole\Coroutine\Http\Client;
 
 class ApiGetter extends Model
 {
@@ -22,56 +21,42 @@ class ApiGetter extends Model
         $this->limit = $limit;
     }
 
-    use Amp\Loop;
-    use Amp\Promise;
-
     public function getItems(int $itemsCount, int $offset = 0): Collection
     {
         $url = $this->apiUrl;
         $limit = $this->limit;
         $data = new Collection();
 
-        Log::info("getFirstPages called! itemsCount ->" . $itemsCount . " offset ->" . $offset);
+        Runtime::enableCoroutine();
 
-        $multiHandle = curl_multi_init();
-        $curlHandles = [];
+        // Создаем массив для хранения корутин
+        $coroutines = [];
 
         for ($page = $offset; $page < $offset + $itemsCount; $page++) {
             $urlWithParams = $url . "?limit={$limit}&offset=$page";
-            $ch = curl_init($urlWithParams);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_multi_add_handle($multiHandle, $ch);
-            $curlHandles[] = $ch;
-        }
 
-        $running = null;
-        do {
-            curl_multi_exec($multiHandle, $running);
-            usleep(1000);
-        } while ($running > 0);
+            // Создаем корутину для каждого запроса
+            $coroutines[] = go(function () use ($urlWithParams) {
+                $client = new Client($urlWithParams);
+                $client->get();
 
-        // Создаем асинхронные задачи для обработки результатов
-        $promises = [];
-        foreach ($curlHandles as $ch) {
-            $promises[] = Loop::async(function () use ($ch) {
-                $response = curl_multi_getcontent($ch);
-                curl_close($ch);
-                return json_decode($response, true)['data'];
+                if ($client->statusCode === 200) {
+                    $response = $client->body;
+                    $responseData = json_decode($response, true);
+                    $data->push(...$responseData['data']);
+                }
+
+                $client->close();
             });
         }
 
-        // Дожидаемся завершения асинхронных задач
-        $results = Promise\wait(Promise\all($promises));
-
-        foreach ($results as $result) {
-            $data->push(...$result);
+        // Дожидаемся завершения всех корутин
+        foreach ($coroutines as $coroutine) {
+            $coroutine->join();
         }
-
-        curl_multi_close($multiHandle);
 
         return $data;
     }
-
     public function getAllItems(): Collection
     {
         $data = new Collection();
