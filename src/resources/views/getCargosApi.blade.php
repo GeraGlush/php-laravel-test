@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="text-center">
-        <div id="form_block">
-            @if(isset($_GET['requestType']))
-                <h1 style="color: whitesmoke; margin-left: 500px; margin-top: 50px; margin-bottom: 50px">Выберите действие с API:</h1>
-                <form id="request-type-form" action="{{route('initialDataShower')}}">
+            <div id="form_block">
+                @if(isset($_GET['requestType']))
+                    <h1 style="color: whitesmoke; margin-left: 500px; margin-top: 50px; margin-bottom: 50px">Выберите действие с API:</h1>
+                    <form id="request-type-form" action="{{route('initialDataShower')}}">
                     @csrf
                     <div>
                         <p></p>
@@ -17,7 +17,7 @@
                             <span class="static-text">https://api.cargo.tech/v1/</span>
                             <input id="api" name="api" value="cargos">
                             <p></p>
-                            @if($_GET['requestType'] === 'all')
+                        @if($_GET['requestType'] === 'all')
                                 <button class="btn btn-primary" type="submit">Запросить все грузы</button>
                             @endif
                         </div>
@@ -35,29 +35,29 @@
                     @if($_GET['requestType'] === 'byPageCount')
                         <p></p>
                         <div class="requestByPageCountSettings">
-                            <p>Выберите сколько первых страниц запросить:</p>
-                            <input id="pageCount" name="pageCount" value="5">
-                            <p></p>
-                            <button class="btn btn-primary" type="submit">Получить первые страницы</button>
-                        </div>
+                        <p>Выберите сколько первых страниц запросить:</p>
+                        <input id="pageCount" name="pageCount" value="5">
+                        <p></p>
+                        <button class="btn btn-primary" type="submit">Получить первые страницы</button>
+                   </div>
 
                     @endif
                 </form>
-            @else
-                <h1 style="color: whitesmoke; margin-left: 500px; margin-top: 50px; margin-bottom: 50px">Выберите действие с API:</h1>
-                <form action="{{route('chooseRequestType')}}" method="post">
-                    @csrf
-                    <select id="requestTypeSelector" name="requestTypeSelector" class="form-control on-trigger-tooltip default_cursor_cs">
-                        <option value="all">Получить все грузы</option>
-                        <option value="byId">Получить груз по ID</option>
-                        <option value="byPageCount">Получить первые страницы грузов</option>
-                    </select>
-                    <p></p>
-                    <button class="btn btn-primary" type="submit">Выбрать</button>
-                </form>
-            @endif
-        </div>
-        <div id="load" class="load"></div>
+                @else
+                    <h1 style="color: whitesmoke; margin-left: 500px; margin-top: 50px; margin-bottom: 50px">Выберите действие с API:</h1>
+                    <form action="{{route('chooseRequestType')}}" method="post">
+                        @csrf
+                        <select id="requestTypeSelector" name="requestTypeSelector" class="form-control on-trigger-tooltip default_cursor_cs">
+                            <option value="all">Получить все грузы</option>
+                            <option value="byId">Получить груз по ID</option>
+                            <option value="byPageCount">Получить первые страницы грузов</option>
+                        </select>
+                        <p></p>
+                        <button class="btn btn-primary" type="submit">Выбрать</button>
+                    </form>
+                @endif
+            </div>
+            <div id="load" class="load"></div>
     </div>
 
     <script>

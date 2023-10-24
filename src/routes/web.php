@@ -24,3 +24,13 @@ Route::get('/getCargosApi', function () {
 Route::get('/cargosUpdater', function () {
     return view('cargosUpdater');
 })->name('cargosUpdater');
+
+Route::get('/getCargosApi/submit',
+    'App\Models\Modules\Api\Models\ApiAsker@makeRequest')->name('initialDataShower');
+
+Route::post('/chooseRequestType/submit',
+    'App\Models\Modules\Api\Models\ApiAsker@chooseRequestType')->name('chooseRequestType');
+
+Route::get('/get_page_count', 'App\Models\Modules\Api\Models\ApiAsker@getPageCount')->name('getPageCount');
+
+Route::get('/getLoadData', 'App\Models\Modules\Api\Models\ApiGetter@getLoadData');
